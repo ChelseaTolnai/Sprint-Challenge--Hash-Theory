@@ -8,7 +8,31 @@ Answer *get_indices_of_item_weights(int *weights, int length, int limit)
   HashTable *ht = create_hash_table(16);
 
   /* YOUR CODE HERE */
+  // Overall runtime O(n)+O(n) -> O(2n) -> O(n) -> linear
 
+  // O(n) -> Loop through weights list and add each item to hashed Linked List
+  for (int i=0; i<length; i++){
+    // Avg. O(1) -> insert into hash table: key=weight value=weight list index
+    hash_table_insert(ht, weights[i], i);
+  }
+
+  // O(n) -> Loop through hash table to retrive weights
+  for (int i=0; i<length; i++){
+    // O(1)
+    int key = limit - weights[i];
+    // Avg. O(1) -> search hash table: key=limit - weight
+    int value = hash_table_retrieve(ht, key);
+    // O(1)
+    if (value > -1) {
+      Answer *answer = malloc(sizeof(Answer));
+      answer->index_1 = value; // value index larger than i 
+      answer->index_2 = i; // because i starts at 0, searches for matching value index ...
+      destroy_hash_table(ht);
+      return answer; // ... and breaks and returns answer once found.
+    }
+  }
+  
+  destroy_hash_table(ht);
   return NULL;
 }
 
